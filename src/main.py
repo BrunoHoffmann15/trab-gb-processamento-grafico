@@ -15,6 +15,7 @@ def render_image():
 
     stop_camera()
 
+    img_frame = cv.resize(img_frame, (400, 400))
     img_frame = apply_filter(img_frame)
     img = Image.fromarray(img_frame)
     imgtk = ImageTk.PhotoImage(image=img)
@@ -102,6 +103,23 @@ def select_filter(filter_name):
     if not video_running:
         render_image()
 
+def on_canvas_click(event):
+    global img_frame, img_tk
+
+    # Coordenadas do clique
+    x, y = event.x, event.y
+
+    # Verifica se há uma imagem carregada
+    if img_frame is not None:
+        # Adiciona um texto na imagem no local clicado
+        cv.putText(img_frame, f"({x},{y})", (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+
+        # Atualiza a imagem no Canvas
+        img_pil = Image.fromarray(img_frame)
+        img_tk = ImageTk.PhotoImage(img_pil)
+        canvas.itemconfig(image_container, image=img_tk)
+        canvas.image = img_tk
+
 # Função para adicionar stickers
 def add_sticker(sticker_name):
     print(f"Sticker '{sticker_name}' adicionado!")
@@ -124,6 +142,8 @@ upload_btn.grid(row=1, column=1, padx=5, pady=5)
 canvas = tk.Canvas(root, width=400, height=400, bg="gray")
 canvas.grid(row=1, column=0, columnspan=4, pady=10)
 image_container = canvas.create_image(200, 200, anchor=tk.CENTER)
+
+canvas.bind("<Button-1>", on_canvas_click)
 
 # Botões para filtros
 filters_frame = tk.LabelFrame(root, text="Filtros", padx=5, pady=5)
