@@ -1,15 +1,88 @@
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
-import cv2
+import cv2 as cv
+from components.filter import filter_options;
 
-# Função para abrir a câmera
+frame = None
+cap = None
+activated_filter = None
+video_running = False
+
+# Função para renderizar imagem
+def render_image():
+    global frame, cap
+
+    stop_camera()
+
+    img = Image.fromarray(frame)
+    imgtk = ImageTk.PhotoImage(image=img)
+
+    canvas.itemconfig(image_container, image=imgtk)
+    canvas.image = imgtk
+
+
+def stop_camera():
+    global cap, video_running
+
+    if video_running:
+        video_running = False  # Interrompe o loop do vídeo
+        if cap is not None:
+            cap.release()  # Libera a câmera
+            cap = None
+
+        # Limpa o Canvas
+        canvas.itemconfig(image_container, image="")
+        canvas.image = None
+
+
+def update_frame():
+    global cap, video_running
+
+    if video_running:
+        ret, frame = cap.read()
+
+        if ret:
+            # Converte o frame para RGB
+            frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            frame = cv.resize(frame, (384, 216))  # Ajusta ao tamanho do canvas
+
+            # Converte o frame para uma imagem do Tkinter
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            canvas.itemconfig(image_container, image=imgtk)
+            canvas.image = imgtk  # Referência para evitar garbage collection
+
+            # Continua atualizando
+            canvas.after(10, update_frame)
+        else:
+            cap.release()
+
+# Função para capturar vídeo e exibir no canvas
 def open_camera():
-    print("")
+    global cap, video_running
+
+    # Inicializa a captura de vídeo
+
+    cap = cv.VideoCapture(0)
+
+    if not cap.isOpened():
+        tk.messagebox.showerror("Erro", "Não foi possível acessar a câmera")
+        return
+
+    # Atualiza os frames no canvas
+    video_running = True
+    update_frame()
 
 # Função para fazer upload de uma imagem
 def upload_photo():
-    print("")
+    global frame
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
+
+    if file_path:
+        img = cv.imread(file_path)
+        frame = cv.cvtColor(img, cv.COLOR_RGB2BGR)
+        render_image()
 
 # Função para aplicar filtros
 def apply_filter(filter_name):
