@@ -17,6 +17,7 @@ def add_stickers_to_image(image_frame):
   for sticker in activated_stickers:
     background = image_frame
     foreground = cv.imread(sticker["path"], cv.IMREAD_UNCHANGED)
+    foreground = cv.cvtColor(foreground, cv.COLOR_BGRA2RGBA)
 
     width = int(foreground.shape[1] * sticker["scale"])
     height = int(foreground.shape[0] * sticker["scale"])

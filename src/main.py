@@ -29,7 +29,8 @@ def render_image():
 
     # Ajusta a imagem
     img_frame = cv.resize(img_frame, (400, 400))
-    img = Image.fromarray(cv.cvtColor(img_frame, cv.COLOR_BGR2RGB))
+    img_frame = cv.cvtColor(img_frame, cv.COLOR_BGR2RGB)
+    img = Image.fromarray(img_frame)
     imgtk = ImageTk.PhotoImage(image=img)
 
     canvas.itemconfig(image_container, image=imgtk)
@@ -120,8 +121,7 @@ def upload_photo():
 
     if file_path:
         img = cv.imread(file_path)
-        original_image = cv.cvtColor(img, cv.COLOR_BGR2RGB)  # Salva a imagem original
-        original_image = cv.resize(original_image, (400, 400))
+        original_image = cv.resize(img, (400, 400))
 
         img_frame = original_image.copy() 
         render_image()
