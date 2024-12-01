@@ -3,12 +3,18 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2 as cv
 from components.filter import filter_options
+<<<<<<< HEAD
+=======
+from components.sticker import stickers_options, add_stickers_to_image, add_activated_stickers_sticker
+>>>>>>> 9e0aeee (feat: adiciona stickers)
 
 img_frame = None  
 original_image = None  
 cap = None
 activated_filter = None
 video_running = False
+positions_to_apply_sticker = []
+sticker_selected = None
 
 # Função para renderizar imagem
 def render_image():
@@ -16,11 +22,16 @@ def render_image():
 
     stop_camera()
 
+<<<<<<< HEAD
     if original_image is None:
         return
 
     # Pega a imagem original
     img_frame = original_image.copy()
+=======
+    img_frame = cv.resize(img_frame, (400, 400))
+    img_frame = add_stickers_to_image(img_frame)
+>>>>>>> 9e0aeee (feat: adiciona stickers)
     img_frame = apply_filter(img_frame)
 
     # Ajusta a imagem
@@ -106,19 +117,40 @@ def select_filter(filter_name):
         render_image()
 
 def on_canvas_click(event):
+<<<<<<< HEAD
     global img_frame
 
     # Coordenadas do click
-    x, y = event.x, event.y
+=======
+    global img_frame, sticker_selected
 
+    if sticker_selected is None:
+        return
+    
+    # Coordenadas do clique
+>>>>>>> 9e0aeee (feat: adiciona stickers)
+    x, y = event.x, event.y
+    add_activated_stickers_sticker(sticker_selected, x, y)
+
+<<<<<<< HEAD
     if img_frame is not None:
         # Adiciona um texto na imagem no local clicado
         cv.putText(img_frame, f"({x},{y})", (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+=======
+    if not video_running:
+>>>>>>> 9e0aeee (feat: adiciona stickers)
         render_image()
 
 # Função para adicionar stickers
 def add_sticker(sticker_name):
+<<<<<<< HEAD
     print(f"Sticker '{sticker_name}' added!")
+=======
+    global sticker_selected
+    sticker_selected = sticker_name
+
+    print(f"Sticker '{sticker_name}' adicionado!")
+>>>>>>> 9e0aeee (feat: adiciona stickers)
 
 # Criação da interface principal
 root = tk.Tk()
@@ -155,7 +187,7 @@ for i, filter_name in enumerate(filter_names):
 stickers_frame = tk.LabelFrame(root, text="Stickers", padx=5, pady=5)
 stickers_frame.grid(row=3, column=0, columnspan=4, pady=10)
 
-sticker_names = [f"Sticker {i+1}" for i in range(5)]
+sticker_names = stickers_options.keys()
 for i, sticker_name in enumerate(sticker_names):
     btn = tk.Button(stickers_frame, text=sticker_name, command=lambda s=sticker_name: add_sticker(s))
     btn.grid(row=0, column=i, padx=5, pady=5)
