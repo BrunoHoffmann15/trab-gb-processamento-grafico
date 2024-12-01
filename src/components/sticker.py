@@ -3,6 +3,10 @@ import cv2 as cv
 
 activated_stickers = []
 
+
+def remove_activated_stickers():
+  activated_stickers.clear()
+
 def add_activated_stickers_sticker(sticker_name, position_x, position_y):
   activated_stickers.append({ "name": sticker_name, 
                              "position_x": position_x, 
@@ -99,5 +103,9 @@ def apply_sticker(background, foreground, pos_x=None, pos_y=None):
 
 stickers_options = {
   'Óculos': { 'path': "./content/stickers/black-glasses-isolated-png.webp", 'scale': 0.2 },
-  'Coração': { 'path': "./content/stickers/emoji-png-0016.png", 'scale': 0.2 }
+  'Coração': { 'path': "./content/stickers/heart.webp", 'scale': 0.07 },
+  'Dinossauro': { 'path': "./content/stickers/dinossauro.webp", 'scale': 0.10 },
+  'Cachorro': { 'path': "./content/stickers/cachorro.webp", 'scale': 0.20 },
+  'Robo': { 'path': "./content/stickers/robo.webp", 'scale': 0.24 },
+  'Limpar Todos' : None
 }

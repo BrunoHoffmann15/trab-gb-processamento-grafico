@@ -3,7 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2 as cv
 from components.filter import filter_options
-from components.sticker import add_stickers_to_image, add_activated_stickers_sticker, stickers_options
+from components.sticker import add_stickers_to_image, add_activated_stickers_sticker, remove_activated_stickers, stickers_options
 
 img_frame = None  
 original_image = None  
@@ -153,12 +153,18 @@ def on_canvas_click(event):
         render_image()
 
 # Função para adicionar stickers
-def add_sticker(sticker_name):
+def handle_sticker(option_selected):
     global sticker_selected
-    sticker_selected = sticker_name
 
-    print(f"Sticker '{sticker_name}' adicionado!")
+    if option_selected == "Limpar Todos":
+        sticker_selected = None
+        remove_activated_stickers()
 
+        if not video_running:
+            render_image()
+
+    else:
+        sticker_selected = option_selected
 # Criação da interface principal
 root = tk.Tk()
 root.title("Photo Editor")
@@ -196,7 +202,7 @@ stickers_frame.grid(row=3, column=0, columnspan=4, pady=10)
 
 sticker_names = stickers_options.keys()
 for i, sticker_name in enumerate(sticker_names):
-    btn = tk.Button(stickers_frame, text=sticker_name, command=lambda s=sticker_name: add_sticker(s))
+    btn = tk.Button(stickers_frame, text=sticker_name, command=lambda s=sticker_name: handle_sticker(s))
     btn.grid(row=0, column=i, padx=5, pady=5)
 
 # Loop da aplicação
