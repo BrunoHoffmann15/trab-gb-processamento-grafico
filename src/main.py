@@ -48,6 +48,32 @@ def stop_camera():
         canvas.itemconfig(image_container, image="")
         canvas.image = None
 
+def resize_video(frame):
+    altura_original, largura_original = frame.shape[:2]
+
+    canvas_size = 400
+
+    # Calcular o ponto de corte para centralizar
+    x_centro = largura_original // 2
+    y_centro = altura_original // 2
+
+    # Calcular as coordenadas para cortar a imagem
+    x_inicio = max(0, x_centro - canvas_size // 2)
+    y_inicio = max(0, y_centro - canvas_size // 2)
+    x_fim = x_inicio + canvas_size
+    y_fim = y_inicio + canvas_size
+
+    # Garantir que os limites não extrapolem a imagem original
+    x_fim = min(x_fim, largura_original)
+    y_fim = min(y_fim, altura_original)
+
+    imagem_recortada = frame[y_inicio:y_fim, x_inicio:x_fim]
+
+    imagem_ajustada = cv.resize(imagem_recortada, (canvas_size, canvas_size), interpolation=cv.INTER_AREA)
+
+    return imagem_ajustada
+
+
 def update_video_frame():
     global cap, video_running
 
@@ -56,9 +82,9 @@ def update_video_frame():
 
         if ret:
             # Aplica o filtro no vídeo
-            frame = cv.resize(frame, (384, 216))  # Resize
-             
-            img_frame = add_stickers_to_image(img_frame)
+            frame = resize_video(frame)  # Resize
+
+            frame = add_stickers_to_image(frame)
             frame = apply_filter(frame)
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
@@ -95,6 +121,8 @@ def upload_photo():
     if file_path:
         img = cv.imread(file_path)
         original_image = cv.cvtColor(img, cv.COLOR_BGR2RGB)  # Salva a imagem original
+        original_image = cv.resize(original_image, (400, 400))
+
         img_frame = original_image.copy() 
         render_image()
 
