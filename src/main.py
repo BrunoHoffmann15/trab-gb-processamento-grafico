@@ -2,27 +2,34 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2 as cv
-from components.filter import filter_options;
+from components.filter import filter_options
 
-img_frame = None
+img_frame = None  
+original_image = None  
 cap = None
 activated_filter = None
 video_running = False
 
 # Função para renderizar imagem
 def render_image():
-    global img_frame, cap
+    global img_frame, original_image
 
     stop_camera()
 
-    img_frame = cv.resize(img_frame, (400, 400))
+    if original_image is None:
+        return
+
+    # Pega a imagem original
+    img_frame = original_image.copy()
     img_frame = apply_filter(img_frame)
-    img = Image.fromarray(img_frame)
+
+    # Ajusta a imagem
+    img_frame = cv.resize(img_frame, (400, 400))
+    img = Image.fromarray(cv.cvtColor(img_frame, cv.COLOR_BGR2RGB))
     imgtk = ImageTk.PhotoImage(image=img)
 
     canvas.itemconfig(image_container, image=imgtk)
     canvas.image = imgtk
-
 
 def stop_camera():
     global cap, video_running
@@ -34,10 +41,8 @@ def stop_camera():
             cap.release()
             cap = None
 
-        # Limpa o Canvas
         canvas.itemconfig(image_container, image="")
         canvas.image = None
-
 
 def update_video_frame():
     global cap, video_running
@@ -46,18 +51,18 @@ def update_video_frame():
         ret, frame = cap.read()
 
         if ret:
-            # Converte o frame para RGB
+            # Aplica o filtro no vídeo
             frame = apply_filter(frame)
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            frame = cv.resize(frame, (384, 216))  # Ajusta ao tamanho do canvas
+            frame = cv.resize(frame, (384, 216))  # Resize 
 
-            # Converte o frame para uma imagem do Tkinter
+            # Converte para uma imagem Tkinter
             img = Image.fromarray(frame)
             imgtk = ImageTk.PhotoImage(image=img)
             canvas.itemconfig(image_container, image=imgtk)
             canvas.image = imgtk  # Referência para evitar garbage collection
 
-            # Continua atualizando
+            # Continue updating
             canvas.after(10, update_video_frame)
         else:
             cap.release()
@@ -66,36 +71,33 @@ def update_video_frame():
 def open_camera():
     global cap, video_running
 
-    # Inicializa a captura de vídeo
-
     cap = cv.VideoCapture(0)
 
     if not cap.isOpened():
-        tk.messagebox.showerror("Erro", "Não foi possível acessar a câmera")
+        tk.messagebox.showerror("Error", "Could not access the camera")
         return
 
-    # Atualiza os frames no canvas
     video_running = True
     update_video_frame()
 
 # Função para fazer upload de uma imagem
 def upload_photo():
-    global img_frame
+    global img_frame, original_image
+
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
 
     if file_path:
         img = cv.imread(file_path)
-        img_frame = cv.cvtColor(img, cv.COLOR_RGB2BGR)
+        original_image = cv.cvtColor(img, cv.COLOR_BGR2RGB)  # Salva a imagem original
+        img_frame = original_image.copy() 
         render_image()
-
 
 def apply_filter(frame):
     if activated_filter:
         frame = activated_filter(frame)
-    
     return frame
 
-# Função para aplicar filtros
+# Função para selecionar o filtro
 def select_filter(filter_name):
     global activated_filter
     activated_filter = filter_options.get(filter_name)
@@ -104,38 +106,32 @@ def select_filter(filter_name):
         render_image()
 
 def on_canvas_click(event):
-    global img_frame, img_tk
+    global img_frame
 
-    # Coordenadas do clique
+    # Coordenadas do click
     x, y = event.x, event.y
 
-    # Verifica se há uma imagem carregada
     if img_frame is not None:
         # Adiciona um texto na imagem no local clicado
         cv.putText(img_frame, f"({x},{y})", (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-
-        # Atualiza a imagem no Canvas
-        img_pil = Image.fromarray(img_frame)
-        img_tk = ImageTk.PhotoImage(img_pil)
-        canvas.itemconfig(image_container, image=img_tk)
-        canvas.image = img_tk
+        render_image()
 
 # Função para adicionar stickers
 def add_sticker(sticker_name):
-    print(f"Sticker '{sticker_name}' adicionado!")
+    print(f"Sticker '{sticker_name}' added!")
 
 # Criação da interface principal
 root = tk.Tk()
-root.title("Editor de Fotos")
+root.title("Photo Editor")
 
-# Botões principais
-image_frame = tk.LabelFrame(root, text="Imagem", padx=5, pady=5)
+# Botões Principais
+image_frame = tk.LabelFrame(root, text="Image", padx=5, pady=5)
 image_frame.grid(row=0, column=0, columnspan=4, pady=10)
 
-camera_btn = tk.Button(image_frame, text="Abrir Câmera", command=open_camera)
+camera_btn = tk.Button(image_frame, text="Open Camera", command=open_camera)
 camera_btn.grid(row=1, column=0, padx=5, pady=5)
 
-upload_btn = tk.Button(image_frame, text="Fazer Upload", command=upload_photo)
+upload_btn = tk.Button(image_frame, text="Upload Photo", command=upload_photo)
 upload_btn.grid(row=1, column=1, padx=5, pady=5)
 
 # Canvas para exibir a imagem
@@ -145,8 +141,8 @@ image_container = canvas.create_image(200, 200, anchor=tk.CENTER)
 
 canvas.bind("<Button-1>", on_canvas_click)
 
-# Botões para filtros
-filters_frame = tk.LabelFrame(root, text="Filtros", padx=5, pady=5)
+# Botões por filtros
+filters_frame = tk.LabelFrame(root, text="Filters", padx=5, pady=5)
 filters_frame.grid(row=2, column=0, columnspan=4, pady=10)
 
 filter_names = filter_options.keys()
@@ -164,5 +160,5 @@ for i, sticker_name in enumerate(sticker_names):
     btn = tk.Button(stickers_frame, text=sticker_name, command=lambda s=sticker_name: add_sticker(s))
     btn.grid(row=0, column=i, padx=5, pady=5)
 
-# Inicia o loop da interface
+# Loop da aplicação
 root.mainloop()

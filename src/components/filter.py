@@ -1,6 +1,6 @@
 import cv2 as cv
 
-output_path = "Output"
+output_path = "output"
 
 def blurFilter(img):
   blur = cv.GaussianBlur(img, (13, 13), 5, 0)
