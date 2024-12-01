@@ -33,9 +33,14 @@ def increaseSaturation(img):
   return increaseSaturation
 
 def inverted(img):
-  inverted = cv.flip(img, -1)
-  cv.imwrite(output_path+"/teste.jpg", inverted)
-  return inverted
+  ret,thresh4 = cv.threshold(img,127,255,cv.THRESH_TOZERO)
+  cv.imwrite(output_path+"/teste.jpg", thresh4)
+  return thresh4
+
+def tresholding(img):
+  ret,thresh4 = cv.threshold(img,127,255,cv.THRESH_TOZERO)
+  cv.imwrite(output_path+"/teste.jpg", thresh4)
+  return thresh4
 
 filter_options = {
   'Blur': blurFilter,
@@ -45,4 +50,5 @@ filter_options = {
   'Green Glitch': greenGlitch,
   '+Sturation': increaseSaturation,
   'Inverted': inverted,
+  'Negative': tresholding,
 }
