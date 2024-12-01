@@ -51,4 +51,5 @@ filter_options = {
   '+Sturation': increaseSaturation,
   'Inverted': inverted,
   'Negative': tresholding,
+  'Remove Filtros': None
 }
