@@ -3,10 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2 as cv
 from components.filter import filter_options
-<<<<<<< HEAD
-=======
-from components.sticker import stickers_options, add_stickers_to_image, add_activated_stickers_sticker
->>>>>>> 9e0aeee (feat: adiciona stickers)
+from components.sticker import add_stickers_to_image, add_activated_stickers_sticker, stickers_options
 
 img_frame = None  
 original_image = None  
@@ -22,16 +19,12 @@ def render_image():
 
     stop_camera()
 
-<<<<<<< HEAD
     if original_image is None:
         return
 
     # Pega a imagem original
     img_frame = original_image.copy()
-=======
-    img_frame = cv.resize(img_frame, (400, 400))
     img_frame = add_stickers_to_image(img_frame)
->>>>>>> 9e0aeee (feat: adiciona stickers)
     img_frame = apply_filter(img_frame)
 
     # Ajusta a imagem
@@ -63,9 +56,11 @@ def update_video_frame():
 
         if ret:
             # Aplica o filtro no vídeo
+            frame = cv.resize(frame, (384, 216))  # Resize
+             
+            img_frame = add_stickers_to_image(img_frame)
             frame = apply_filter(frame)
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            frame = cv.resize(frame, (384, 216))  # Resize 
 
             # Converte para uma imagem Tkinter
             img = Image.fromarray(frame)
@@ -117,40 +112,24 @@ def select_filter(filter_name):
         render_image()
 
 def on_canvas_click(event):
-<<<<<<< HEAD
-    global img_frame
-
-    # Coordenadas do click
-=======
     global img_frame, sticker_selected
 
     if sticker_selected is None:
         return
     
     # Coordenadas do clique
->>>>>>> 9e0aeee (feat: adiciona stickers)
     x, y = event.x, event.y
     add_activated_stickers_sticker(sticker_selected, x, y)
 
-<<<<<<< HEAD
-    if img_frame is not None:
-        # Adiciona um texto na imagem no local clicado
-        cv.putText(img_frame, f"({x},{y})", (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-=======
     if not video_running:
->>>>>>> 9e0aeee (feat: adiciona stickers)
         render_image()
 
 # Função para adicionar stickers
 def add_sticker(sticker_name):
-<<<<<<< HEAD
-    print(f"Sticker '{sticker_name}' added!")
-=======
     global sticker_selected
     sticker_selected = sticker_name
 
     print(f"Sticker '{sticker_name}' adicionado!")
->>>>>>> 9e0aeee (feat: adiciona stickers)
 
 # Criação da interface principal
 root = tk.Tk()
