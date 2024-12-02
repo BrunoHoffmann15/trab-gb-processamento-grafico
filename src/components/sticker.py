@@ -31,7 +31,8 @@ def add_stickers_to_image(image_frame):
 
     image_frame = apply_sticker(background, foreground, sticker["position_x"], sticker["position_y"])
   
-  cv.imwrite(output_path + f"/stickers_applied-{int(time.time())}.jpg", image_frame)
+  cv.imwrite(output_path + f"/sticker_last_modification.png", image_frame)
+
   return image_frame
 
 def apply_sticker(background, foreground, pos_x=None, pos_y=None):
