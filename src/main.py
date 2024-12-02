@@ -13,6 +13,9 @@ video_running = False
 positions_to_apply_sticker = []
 sticker_selected = None
 
+def save_last_image(image_frame):
+    cv.imwrite("output/last_modified_image.png", image_frame)
+
 # Função para renderizar imagem
 def render_image():
     global img_frame, original_image
@@ -26,6 +29,9 @@ def render_image():
     img_frame = original_image.copy()
     img_frame = add_stickers_to_image(img_frame)
     img_frame = apply_filter(img_frame)
+
+    # Salva imagem
+    save_last_image(img_frame)
 
     # Ajusta a imagem
     img_frame = cv.resize(img_frame, (400, 400))
@@ -85,8 +91,13 @@ def update_video_frame():
             # Aplica o filtro no vídeo
             frame = resize_video(frame)  # Resize
 
+            # Aplica filtros e stickers
             frame = add_stickers_to_image(frame)
             frame = apply_filter(frame)
+
+            # Salva imagem
+            save_last_image(frame)
+
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
             # Converte para uma imagem Tkinter
