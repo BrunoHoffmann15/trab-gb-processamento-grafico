@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 
 output_path = "output"
 
@@ -37,10 +38,24 @@ def inverted(img):
   cv.imwrite(output_path+"/inverted.jpg", inverted)
   return inverted
 
-def tresholding(img):
+def thresholding(img):
   ret,thresh4 = cv.threshold(img,127,255,cv.THRESH_TOZERO)
-  cv.imwrite(output_path+"/tresholding.jpg", thresh4)
+  cv.imwrite(output_path+"/thresholding.jpg", thresh4)
   return thresh4
+
+def exposure(img):
+  exposure_kernel = np.array([[0, -1, 0], 
+                    [-1, 7, -1], 
+                    [0, -1, 0]]) 
+  exposure = cv.filter2D(src=img, ddepth=-1, kernel=exposure_kernel)
+  cv.imwrite(output_path+"/exposure.jpg", exposure)
+  return exposure
+
+def negative(img):
+  kernel = cv.getStructuringElement(cv.MORPH_CROSS,(5,5))
+  negative = cv.morphologyEx(img, cv.MORPH_GRADIENT, kernel)
+  cv.imwrite(output_path+"/negative.jpg", negative)
+  return negative
 
 filter_options = {
   'Blur': blurFilter,
@@ -50,6 +65,8 @@ filter_options = {
   'Green Glitch': greenGlitch,
   '+Sturation': increaseSaturation,
   'Inverted': inverted,
-  'Negative': tresholding,
+  'Thresholding': thresholding,
+  '+Exposure': exposure,
+  'Negative': negative,
   'Remove Filtros': None
 }
