@@ -163,3 +163,4 @@ cython_debug/
 
 # Ignore Python virtual environments
 venv/
+**output**
