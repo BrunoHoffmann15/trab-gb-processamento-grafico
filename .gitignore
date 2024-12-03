@@ -163,4 +163,5 @@ cython_debug/
 
 # Ignore Python virtual environments
 venv/
-**output**
+output/*.png
+output/*.jpg
