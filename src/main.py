@@ -38,7 +38,7 @@ def render_image():
     # Salva imagem.
     save_last_image(img_frame)
 
-    # Adiciona cor a imagem.
+    # Converte a imagem de BGR para RGB.
     img_frame = cv.cvtColor(img_frame, cv.COLOR_BGR2RGB)
 
     # Adiciona imagem no canvas da tela.
@@ -113,7 +113,7 @@ def update_video_frame():
             # Salva imagem.
             save_last_image(frame)
 
-            # Adiciona cor para foto.
+            # Converte a imagem de BGR para RGB.
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
             # Adiona imagem no canvas.
