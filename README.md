@@ -6,6 +6,10 @@ Alunos: Bel Cogo, Bruno Hoffmann e João Accorsi.
 
 O objetivo do presente trabalho é criar uma aplicação capaz de obter uma imagem e aplicar filtros sobre essa imagem. Essa imagem pode tanto ser obtida através da câmera da usuária, como também importada.
 
+## Apresentação
+
+Link: https://youtu.be/glW9K46bciI
+
 ## Como executar
 
 Para executar a aplicação é necessário executar os comandos abaixo:
