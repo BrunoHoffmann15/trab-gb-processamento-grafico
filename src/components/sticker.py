@@ -1,12 +1,14 @@
 import cv2 as cv
-import time
 
+# Define variáveis globais
 output_path = "output"
 activated_stickers = []
 
+# Função para remover todos stickers.
 def remove_activated_stickers():
   activated_stickers.clear()
 
+# Função para adicionar novos stickers.
 def add_activated_stickers_sticker(sticker_name, position_x, position_y):
   activated_stickers.append({ "name": sticker_name, 
                              "position_x": position_x, 
@@ -14,27 +16,37 @@ def add_activated_stickers_sticker(sticker_name, position_x, position_y):
                              "path": stickers_options[sticker_name]["path"],
                              "scale": stickers_options[sticker_name]["scale"]})
 
+# Função para adicionar stickers a imagem.
 def add_stickers_to_image(image_frame):
+  # Verifica se não há uma imagem.
   if image_frame is None:
     return
   
+  # Itera sobre os stickers ativos.
   for sticker in activated_stickers:
     background = image_frame
+    
+    # Obtém os stickers por path.
     foreground = cv.imread(sticker["path"], cv.IMREAD_UNCHANGED)
     foreground = cv.cvtColor(foreground, cv.COLOR_BGRA2RGBA)
 
+    # Obtém informações do stickers e considera escala.
     width = int(foreground.shape[1] * sticker["scale"])
     height = int(foreground.shape[0] * sticker["scale"])
     dimension = (width, height)
 
+    # Faz o resize do sticker com base na escala definida.
     foreground = cv.resize(foreground, dimension, interpolation=cv.INTER_AREA)
 
+    # Aplica sticker sobre a imagem.
     image_frame = apply_sticker(background, foreground, sticker["position_x"], sticker["position_y"])
   
+  # Salva imagem final após adicionar stickers.
   cv.imwrite(output_path + f"/sticker_last_modification.png", image_frame)
 
   return image_frame
 
+# Função para aplicar stickers em cima da imagem.
 def apply_sticker(background, foreground, pos_x=None, pos_y=None):
     """
     Cola um sticker (foreground) com canal alpha em um fundo (background),
@@ -101,8 +113,7 @@ def apply_sticker(background, foreground, pos_x=None, pos_y=None):
 
     return background
 
-
-
+# Definição das opções de stickers.
 stickers_options = {
   'Óculos': { 'path': "./content/stickers/black-glasses-isolated-png.webp", 'scale': 0.2 },
   'Coração': { 'path': "./content/stickers/heart.webp", 'scale': 0.07 },
