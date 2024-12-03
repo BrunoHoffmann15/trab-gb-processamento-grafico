@@ -11,7 +11,6 @@ original_image = None
 cap = None
 activated_filter = None
 video_running = False
-positions_to_apply_sticker = []
 sticker_selected = None
 
 # Salva a imagem atual.
