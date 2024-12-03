@@ -80,5 +80,5 @@ filter_options = {
   'Thresholding': thresholding,
   '+Exposure': exposure,
   'Negative': negative,
-  'Remove Filtros': None
+  'Original': None
 }
